@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Contact — Arolax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@500;600;700;800&family=Instrument+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>try{sessionStorage.getItem('pt:transitioning')==='1'&&document.documentElement.classList.add('pt-arriving');}catch(e){}</script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="logo">arolax<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+            <a href="contact.html" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-inner">
+                <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Contact</span></div>
+                <h1>Let's make something <em>great</em>.</h1>
+                <p>Tell us about your project below, or reach out directly. We reply to every real inquiry within one business day.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section>
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <span class="eyebrow">Get in Touch</span>
+                    <h2>We'd love to <em style="font-family:'Instrument Serif',serif;font-style:italic;color:var(--accent);font-weight:400;">hear</em> from you.</h2>
+                    <p>Whether you have a project ready to go or just want to chat about what's possible, drop us a line.</p>
+                    <ul class="contact-list">
+                        <li>
+                            <div class="icon">✉</div>
+                            <div>
+                                <span class="label">Email us</span>
+                                <span class="value">hello@arolax.co</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">☎</div>
+                            <div>
+                                <span class="label">Call us</span>
+                                <span class="value">+1 (212) 555-0143</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">◎</div>
+                            <div>
+                                <span class="label">Visit</span>
+                                <span class="value">240 Kent Ave, Brooklyn NY 11249</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">◷</div>
+                            <div>
+                                <span class="label">Office hours</span>
+                                <span class="value">Mon–Fri · 9:00 – 18:00 EST</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Thanks — this is a demo form.');">
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="name">Your name</label>
+                            <input type="text" id="name" placeholder="Jane Doe" required>
+                        </div>
+                        <div class="field">
+                            <label for="email">Email address</label>
+                            <input type="email" id="email" placeholder="you@company.com" required>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" placeholder="Acme Inc.">
+                        </div>
+                        <div class="field">
+                            <label for="budget">Budget range</label>
+                            <input type="text" id="budget" placeholder="$25k – $50k">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="message">Tell us about your project</label>
+                        <textarea id="message" placeholder="A few sentences is plenty — we'll follow up with questions." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send Message <span class="btn-arrow">→</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">arolax<span>.</span></a>
+                    <p>A marketing studio building brands that grow. Based in Brooklyn, working worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Services</h5>
+                    <ul>
+                        <li><a href="services.html">Branding</a></li>
+                        <li><a href="services.html">SEO</a></li>
+                        <li><a href="services.html">Paid Media</a></li>
+                        <li><a href="services.html">Web Design</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Contact</h5>
+                    <ul>
+                        <li><a href="mailto:hello@arolax.co">hello@arolax.co</a></li>
+                        <li><a href="tel:+12125550143">+1 (212) 555-0143</a></li>
+                        <li><a href="contact.html">Get in touch</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2026 Arolax Studio. All rights reserved.</div>
+                <div class="socials">
+                    <a href="#">IG</a>
+                    <a href="#">X</a>
+                    <a href="#">IN</a>
+                    <a href="#">BE</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/transitions.js"></script>
+</body>
+</html>
