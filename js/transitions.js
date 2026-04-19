@@ -5,7 +5,7 @@
        Easing list — shown in the Easing dropdown
        ============================================================ */
     const EASES = [
-        'power1.inOut', 'power2.inOut', 'power3.inOut', 'power4.inOut',
+        'ease-in','ease-out','power1.inOut', 'power2.inOut', 'power3.inOut', 'power4.inOut',
         'expo.inOut', 'sine.inOut', 'circ.inOut', 'back.inOut(1.7)',
         'power2.out', 'power3.out', 'expo.out',
         'power2.in', 'power3.in',
@@ -28,11 +28,18 @@
        Shared timing schema — split across exit & enter phases.
        Each transition composes its schema with TIMING(...).
        ============================================================ */
+    /* Shared small vocabulary to avoid repeating literals across schemas */
+    const STAGGER_FROM = ['start', 'end', 'center', 'edges', 'random'];
+
     const TIMING = (exitDur, enterDur, defaultEase) => ({
-        exitDuration:  { phase: 'exit',  type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: exitDur },
+        exitDelay:     { phase: 'exit',  type: 'range',  label: 'Delay',    min: 0, max: 2,    step: 0.05, unit: 's', default: 0 },
+        exitDuration:  { phase: 'exit',  type: 'range',  label: 'Duration', min: 0.2, max: 2,  step: 0.05, unit: 's', default: exitDur },
         exitEase:      { phase: 'exit',  type: 'select', label: 'Easing',   options: EASES, default: defaultEase },
-        enterDuration: { phase: 'enter', type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: enterDur },
-        enterEase:     { phase: 'enter', type: 'select', label: 'Easing',   options: EASES, default: defaultEase }
+        exitOpacity:   { phase: 'exit',  type: 'range',  label: 'Opacity',  min: 0, max: 1,    step: 0.05, default: 1 },
+        enterDelay:    { phase: 'enter', type: 'range',  label: 'Delay',    min: 0, max: 2,    step: 0.05, unit: 's', default: 0 },
+        enterDuration: { phase: 'enter', type: 'range',  label: 'Duration', min: 0.2, max: 2,  step: 0.05, unit: 's', default: enterDur },
+        enterEase:     { phase: 'enter', type: 'select', label: 'Easing',   options: EASES, default: defaultEase },
+        enterOpacity:  { phase: 'enter', type: 'range',  label: 'Opacity',  min: 0, max: 1,    step: 0.05, default: 1 }
     });
 
     /* ============================================================
@@ -119,14 +126,11 @@
                 direction:        { phase: 'shared', type: 'select', label: 'Slide direction', options: ['up', 'down'], default: 'up' },
                 color:            { phase: 'shared', type: 'color',  label: 'Panel color', default: '#0a0a0a' },
                 altTint:          { phase: 'shared', type: 'toggle', label: 'Alternate tint', default: true },
-                exitStaggerFrom:  { phase: 'exit',   type: 'select', label: 'Stagger from', options: ['start', 'end', 'center', 'edges', 'random'], default: 'start' },
-                exitStaggerEach:  { phase: 'exit',   type: 'range',  label: 'Stagger delay', min: 0.02, max: 0.2, step: 0.01, unit: 's', default: 0.07 },
-                exitDuration:     { phase: 'exit',   type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.75 },
-                exitEase:         { phase: 'exit',   type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' },
-                enterStaggerFrom: { phase: 'enter',  type: 'select', label: 'Stagger from', options: ['start', 'end', 'center', 'edges', 'random'], default: 'start' },
-                enterStaggerEach: { phase: 'enter',  type: 'range',  label: 'Stagger delay', min: 0.02, max: 0.2, step: 0.01, unit: 's', default: 0.07 },
-                enterDuration:    { phase: 'enter',  type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.85 },
-                enterEase:        { phase: 'enter',  type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' }
+                ...TIMING(0.75, 0.85, 'power3.inOut'),
+                exitStaggerFrom:  { phase: 'exit',  type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'start' },
+                exitStaggerEach:  { phase: 'exit',  type: 'range',  label: 'Stagger delay', min: 0.02, max: 0.2, step: 0.01, unit: 's', default: 0.07 },
+                enterStaggerFrom: { phase: 'enter', type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'start' },
+                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Stagger delay', min: 0.02, max: 0.2, step: 0.01, unit: 's', default: 0.07 }
             },
             build(o, c) {
                 const alt = c.altTint ? tintColor(c.color, 10) : c.color;
@@ -420,14 +424,11 @@
                 rows:  { phase: 'shared', type: 'range',  label: 'Rows',    min: 2, max: 10, step: 1, default: 5 },
                 cols:  { phase: 'shared', type: 'range',  label: 'Columns', min: 2, max: 12, step: 1, default: 7 },
                 color: { phase: 'shared', type: 'color',  label: 'Tile color', default: '#0a0a0a' },
-                exitStaggerFrom:  { phase: 'exit',  type: 'select', label: 'Stagger from', options: ['start','end','center','edges','random'], default: 'center' },
+                ...TIMING(0.45, 0.5, 'power3.inOut'),
+                exitStaggerFrom:  { phase: 'exit',  type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'center' },
                 exitStaggerEach:  { phase: 'exit',  type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.12, step: 0.005, unit: 's', default: 0.035 },
-                exitDuration:     { phase: 'exit',  type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.45 },
-                exitEase:         { phase: 'exit',  type: 'select', label: 'Easing', options: EASES, default: 'power3.out' },
-                enterStaggerFrom: { phase: 'enter', type: 'select', label: 'Stagger from', options: ['start','end','center','edges','random'], default: 'edges' },
-                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.12, step: 0.005, unit: 's', default: 0.035 },
-                enterDuration:    { phase: 'enter', type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.5 },
-                enterEase:        { phase: 'enter', type: 'select', label: 'Easing', options: EASES, default: 'power3.in' }
+                enterStaggerFrom: { phase: 'enter', type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'edges' },
+                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.12, step: 0.005, unit: 's', default: 0.035 }
             },
             build(o, c) {
                 const rows = Math.max(2, Math.min(12, parseInt(c.rows, 10) || 5));
@@ -482,14 +483,11 @@
                 slats: { phase: 'shared', type: 'range',  label: 'Slat count', min: 3, max: 15, step: 1, default: 8 },
                 axis:  { phase: 'shared', type: 'select', label: 'Axis', options: ['horizontal', 'vertical'], default: 'horizontal' },
                 color: { phase: 'shared', type: 'color',  label: 'Slat color', default: '#0a0a0a' },
-                exitStaggerFrom:  { phase: 'exit',  type: 'select', label: 'Stagger from', options: ['start','end','center','edges','random'], default: 'start' },
+                ...TIMING(0.6, 0.55, 'power3.inOut'),
+                exitStaggerFrom:  { phase: 'exit',  type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'start' },
                 exitStaggerEach:  { phase: 'exit',  type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.15, step: 0.005, unit: 's', default: 0.04 },
-                exitDuration:     { phase: 'exit',  type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.6 },
-                exitEase:         { phase: 'exit',  type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' },
-                enterStaggerFrom: { phase: 'enter', type: 'select', label: 'Stagger from', options: ['start','end','center','edges','random'], default: 'end' },
-                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.15, step: 0.005, unit: 's', default: 0.04 },
-                enterDuration:    { phase: 'enter', type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.55 },
-                enterEase:        { phase: 'enter', type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' }
+                enterStaggerFrom: { phase: 'enter', type: 'select', label: 'Stagger from',  options: STAGGER_FROM, default: 'end' },
+                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Stagger delay', min: 0.01, max: 0.15, step: 0.005, unit: 's', default: 0.04 }
             },
             build(o, c) {
                 const n = Math.max(3, Math.min(15, parseInt(c.slats, 10) || 8));
@@ -582,12 +580,9 @@
                 color1:           { phase: 'shared', type: 'color',  label: 'Layer 1', default: '#c6f432' },
                 color2:           { phase: 'shared', type: 'color',  label: 'Layer 2', default: '#1a1a1a' },
                 color3:           { phase: 'shared', type: 'color',  label: 'Layer 3', default: '#0a0a0a' },
+                ...TIMING(0.75, 0.85, 'power3.inOut'),
                 exitStaggerEach:  { phase: 'exit',  type: 'range',  label: 'Layer offset', min: 0.02, max: 0.25, step: 0.01, unit: 's', default: 0.08 },
-                exitDuration:     { phase: 'exit',  type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.75 },
-                exitEase:         { phase: 'exit',  type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' },
-                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Layer offset', min: 0.02, max: 0.25, step: 0.01, unit: 's', default: 0.08 },
-                enterDuration:    { phase: 'enter', type: 'range',  label: 'Duration', min: 0.2, max: 2, step: 0.05, unit: 's', default: 0.85 },
-                enterEase:        { phase: 'enter', type: 'select', label: 'Easing', options: EASES, default: 'power3.inOut' }
+                enterStaggerEach: { phase: 'enter', type: 'range',  label: 'Layer offset', min: 0.02, max: 0.25, step: 0.01, unit: 's', default: 0.08 }
             },
             build(o, c) {
                 o.innerHTML = '<div class="pt-layer"></div><div class="pt-layer"></div><div class="pt-layer"></div>';
@@ -717,6 +712,65 @@
             }
         }
     };
+
+    /* Wrap a transition's exit/enter call with the per-phase delay and
+       opacity tween. Transitions themselves stay unchanged — the wrapper
+       applies the two universal fields on top of whatever each transition
+       already animates.
+
+       Important: we invoke the transition SYNCHRONOUSLY so its internal
+       gsap.set (which snaps the panel to its "off" position) fires
+       immediately. We then pause(0) the resulting tween until the delay
+       elapses, instead of deferring the whole call — otherwise the panel
+       would sit at its default CSS position (fully covering) during the
+       delay and flash the overlay color. */
+    function playPhase(transition, phase, overlay, cfg) {
+        const delay      = cfg[phase + 'Delay'] || 0;
+        const duration   = cfg[phase + 'Duration'] || 1;
+        const ease       = cfg[phase + 'Ease']  || 'power3.inOut';
+        const opacityVal = cfg[phase + 'Opacity'];
+
+        // Reset overlay opacity before each phase so a previous phase's
+        // fade doesn't leak into the next run.
+        gsap.set(overlay, { opacity: 1 });
+
+        // Run transition NOW — sets the panel to its initial state and
+        // creates the animation tween/timeline.
+        const tween = transition[phase](overlay, cfg);
+
+        // Layer an opacity fade on the overlay when the user set < 1.
+        // fromTo's immediateRender applies the starting value instantly,
+        // so the overlay stays invisible (or at opacityVal) during delay.
+        let opacityTween = null;
+        if (opacityVal !== undefined && opacityVal !== 1) {
+            if (phase === 'exit') {
+                opacityTween = gsap.fromTo(overlay, { opacity: 0 }, { opacity: opacityVal, duration, ease, overwrite: 'auto' });
+            } else {
+                opacityTween = gsap.fromTo(overlay, { opacity: opacityVal }, { opacity: 0, duration, ease, overwrite: 'auto' });
+            }
+        }
+
+        if (delay > 0) {
+            // Hold both tweens at time 0 until the delay elapses.
+            if (tween && tween.pause)        tween.pause(0);
+            if (opacityTween && opacityTween.pause) opacityTween.pause(0);
+
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        if (tween && tween.resume)               tween.resume();
+                        if (opacityTween && opacityTween.resume) opacityTween.resume();
+                        if (tween && typeof tween.then === 'function') {
+                            tween.then(resolve, reject);
+                        } else {
+                            resolve();
+                        }
+                    } catch (e) { reject(e); }
+                }, delay * 1000);
+            });
+        }
+        return tween;
+    }
 
     /* Execute a user-built block (method + props + optional time) against
        a target element. Used by the `custom` transition above and by the
@@ -859,10 +913,8 @@
         holdDuration:    0,        // seconds to dwell in the covered state
         overlayLogo:     '',       // URL, data-URL, or inline <svg> markup
         overlayLogoSize: 72,       // logo height in px
-        overlayLabel:    '',       // brand text shown while covering (empty = no label)
-        overlaySpinner:  false     // show a spinner if covered > 400ms (off by default)
+        overlayLabel:    ''        // brand text shown while covering (empty = no label)
     };
-    const SPINNER_DELAY_MS = 400;
     function getGlobalConfig() {
         try {
             return Object.assign({}, GLOBAL_DEFAULTS, JSON.parse(LS.get(KEY_GLOBAL) || '{}'));
@@ -932,16 +984,15 @@
         gsap.set(targets, vars);
     }
 
-    /* Overlay UI — the brand label and optional spinner shown while the
-       overlay is fully covering. Attached to every overlay rebuild so it
-       survives transition-type switches. */
+    /* Overlay UI — the brand label shown while the overlay is fully
+       covering. Attached to every overlay rebuild so it survives
+       transition-type switches. */
     function appendOverlayUI(overlay) {
         const g = getGlobalConfig();
-        const logoRaw    = (g.overlayLogo || '').trim();
-        const hasLogo    = !!logoRaw;
-        const hasLabel   = !!(g.overlayLabel && g.overlayLabel.trim());
-        const hasSpinner = !!g.overlaySpinner;
-        if (!hasLogo && !hasLabel && !hasSpinner) return;
+        const logoRaw  = (g.overlayLogo || '').trim();
+        const hasLogo  = !!logoRaw;
+        const hasLabel = !!(g.overlayLabel && g.overlayLabel.trim());
+        if (!hasLogo && !hasLabel) return;
 
         const ui = document.createElement('div');
         ui.className = 'pt-overlay-ui';
@@ -958,13 +1009,11 @@
                 html += `<img class="pt-overlay-logo" src="${esc(logoRaw)}" alt="" style="height:${size}px">`;
             }
         }
-        if (hasLabel)   html += `<div class="pt-overlay-label">${esc(g.overlayLabel)}</div>`;
-        if (hasSpinner) html += `<div class="pt-overlay-spinner"><div class="pt-overlay-spinner-ring"></div></div>`;
+        if (hasLabel) html += `<div class="pt-overlay-label">${esc(g.overlayLabel)}</div>`;
         ui.innerHTML = html;
         overlay.appendChild(ui);
     }
 
-    let spinnerTimerId = null;
     function showOverlayUI() {
         const ui = document.querySelector('.pt-overlay-ui');
         if (!ui) return;
@@ -975,32 +1024,10 @@
         gsap.to(ui, { autoAlpha: 1, duration: 0.28, ease: 'power2.out', overwrite: 'auto' });
     }
     function hideOverlayUI() {
-        cancelSpinner();
         const ui = document.querySelector('.pt-overlay-ui');
         if (!ui) return;
         gsap.killTweensOf(ui);
         gsap.to(ui, { autoAlpha: 0, duration: 0.18, ease: 'power2.in', overwrite: 'auto' });
-        const sp = ui.querySelector('.pt-overlay-spinner');
-        if (sp) {
-            gsap.killTweensOf(sp);
-            gsap.set(sp, { autoAlpha: 0 });
-        }
-    }
-    function scheduleSpinner() {
-        cancelSpinner();
-        if (!getGlobalConfig().overlaySpinner) return;
-        spinnerTimerId = setTimeout(() => {
-            const sp = document.querySelector('.pt-overlay-spinner');
-            if (!sp) return;
-            gsap.killTweensOf(sp);
-            gsap.to(sp, { autoAlpha: 1, duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
-        }, SPINNER_DELAY_MS);
-    }
-    function cancelSpinner() {
-        if (spinnerTimerId) {
-            clearTimeout(spinnerTimerId);
-            spinnerTimerId = null;
-        }
     }
 
     /* ============================================================
@@ -1079,7 +1106,7 @@
         overlay.classList.add('is-active');
 
         // Kick off exit animation + body-out effect + fetch in parallel.
-        const exitPromise    = TRANSITIONS[name].exit(overlay, cfg);
+        const exitPromise    = playPhase(TRANSITIONS[name], 'exit', overlay, cfg);
         const bodyOutPromise = playBodyOut(global);
         let html = null;
         let fetchErr = null;
@@ -1092,10 +1119,8 @@
         // Let both exit and body-out settle before we swap or hard-nav.
         await Promise.all([exitPromise, bodyOutPromise]);
 
-        // Show the brand label now that the overlay is fully covering;
-        // schedule the spinner to appear only if this covered phase drags on.
+        // Show the brand label now that the overlay is fully covering.
         showOverlayUI();
-        scheduleSpinner();
 
         // Optional dwell time in the fully-covered state.
         if (global.holdDuration > 0) {
@@ -1125,12 +1150,12 @@
             TRANSITIONS[name].arrive(overlay, cfg);
             await new Promise(r => requestAnimationFrame(r));
 
-            // Hide the brand label + spinner before the enter animation starts
+            // Hide the brand label before the enter animation starts
             hideOverlayUI();
 
             // Enter animation + body-in effect in parallel.
             await Promise.all([
-                TRANSITIONS[name].enter(overlay, cfg),
+                playPhase(TRANSITIONS[name], 'enter', overlay, cfg),
                 playBodyIn(global)
             ]);
         } finally {
@@ -1207,8 +1232,8 @@
 
     /* Generic row renderer for the Preset pane — used by both the
        meta "Transition Type" control and every schema-driven prop. */
-    function presetField(label, withInfo, type, propName, options, value, attrs) {
-        const labelHtml = `<div class="pt-row-label">${esc(label)}${withInfo ? ' <span class="pt-info">i</span>' : ''}</div>`;
+    function presetField(label, type, propName, options, value, attrs) {
+        const labelHtml = `<div class="pt-row-label">${esc(label)}</div>`;
 
         if (type === 'toggle') {
             return `<div class="pt-row">
@@ -1259,13 +1284,13 @@
                     </div>
                 </div>
                 <div class="pt-row">
-                    <div class="pt-row-label">Absolute Time <span class="pt-info">i</span></div>
+                    <div class="pt-row-label">Absolute Time</div>
                     <div class="pt-row-input">
                         <input class="pt-input" type="number" value="0" step="0.1" data-field="time">
                     </div>
                 </div>
                 <div class="pt-row">
-                    <div class="pt-row-label">Method <span class="pt-info">i</span></div>
+                    <div class="pt-row-label">Method</div>
                     <div class="pt-row-input">
                         <select class="pt-input" data-field="method">
                             <option>From</option>
@@ -1512,9 +1537,10 @@
     }
 
     /* ============================================================
-       Config export — returns the current transition's config as a
-       single JSON document with shared / exit / enter buckets.
-       This is the exact shape the three localStorage files hold.
+       Export — two formats:
+         1. JSON config (shared / exit / enter buckets, matches storage)
+         2. Runnable JS with transition methods baked in + config frozen
+       The Export view lets the user toggle between them.
        ============================================================ */
 
     function generateTransitionConfig() {
@@ -1537,12 +1563,274 @@
         }, null, 2);
     }
 
+    /* Inlined helper — emitted into the JS export when a transition
+       references it (currently only the `stagger` build uses it). */
+    const TINT_COLOR_SRC = `  function tintColor(hex, delta) {
+    const h = (hex || '#000000').replace('#', '');
+    const num = parseInt(h, 16) || 0;
+    const r = Math.max(0, Math.min(255, ((num >> 16) & 0xff) + delta));
+    const g = Math.max(0, Math.min(255, ((num >> 8) & 0xff) + delta));
+    const b = Math.max(0, Math.min(255, (num & 0xff) + delta));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  }`;
+
+    /* CSS that every exported overlay needs, regardless of transition. */
+    const CSS_BASE = `.pt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+  visibility: hidden;
+}
+.pt-overlay.is-active {
+  pointer-events: auto;
+  visibility: visible;
+}`;
+
+    /* CSS specific to each transition's internal DOM layout. */
+    const CSS_BY_TRANSITION = {
+        curtain: `.pt-overlay[data-transition="curtain"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}`,
+        fade: `.pt-overlay[data-transition="fade"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}`,
+        diagonal: `.pt-overlay[data-transition="diagonal"] .pt-panel {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  will-change: transform;
+}`,
+        split: `.pt-overlay[data-transition="split"] .pt-split-a,
+.pt-overlay[data-transition="split"] .pt-split-b {
+  position: absolute;
+  will-change: transform;
+}
+.pt-overlay[data-transition="split"][data-axis="vertical"] .pt-split-a { top: 0; left: 0; right: 0; height: 50%; }
+.pt-overlay[data-transition="split"][data-axis="vertical"] .pt-split-b { bottom: 0; left: 0; right: 0; height: 50%; }
+.pt-overlay[data-transition="split"][data-axis="horizontal"] .pt-split-a { top: 0; bottom: 0; left: 0; width: 50%; }
+.pt-overlay[data-transition="split"][data-axis="horizontal"] .pt-split-b { top: 0; bottom: 0; right: 0; width: 50%; }`,
+        stagger: `.pt-overlay[data-transition="stagger"] {
+  display: flex;
+}
+.pt-overlay[data-transition="stagger"] .pt-bar {
+  flex: 1;
+  will-change: transform;
+}`,
+        circle: `.pt-overlay[data-transition="circle"] .pt-circle {
+  position: absolute;
+  width: 12vmax;
+  height: 12vmax;
+  margin-top: -6vmax;
+  margin-left: -6vmax;
+  border-radius: 50%;
+  will-change: transform;
+}`,
+        scale: `.pt-overlay[data-transition="scale"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}`,
+        flip: `.pt-overlay[data-transition="flip"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}`,
+        clip: `.pt-overlay[data-transition="clip"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity, clip-path;
+}`,
+        crossfade: `.pt-overlay[data-transition="crossfade"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}`,
+        iris: `.pt-overlay[data-transition="iris"] .pt-panel {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}`,
+        tileGrid: `.pt-overlay[data-transition="tileGrid"] {
+  display: grid;
+  grid-template-rows:    repeat(var(--pt-grid-rows, 5), 1fr);
+  grid-template-columns: repeat(var(--pt-grid-cols, 7), 1fr);
+}
+.pt-overlay[data-transition="tileGrid"] .pt-tile {
+  width: 100%;
+  height: 100%;
+  will-change: transform, opacity;
+}`,
+        push: `.pt-overlay[data-transition="push"] .pt-push-wrap {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}`,
+        shutter: `.pt-overlay[data-transition="shutter"] {
+  display: flex;
+}
+.pt-overlay[data-transition="shutter"][data-axis="horizontal"] {
+  flex-direction: column;
+}
+.pt-overlay[data-transition="shutter"][data-axis="vertical"] {
+  flex-direction: row;
+}
+.pt-overlay[data-transition="shutter"] .pt-slat {
+  flex: 1;
+  will-change: transform;
+}`,
+        layers: `.pt-overlay[data-transition="layers"] .pt-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}`,
+        custom: `/* Custom transition — the target's layout is whatever GSAP props you set. */`
+    };
+
+    function generateTransitionCSS() {
+        const name = getSelected();
+        const specific = CSS_BY_TRANSITION[name] || '';
+        return `/* ${(TRANSITIONS[name] && TRANSITIONS[name].label) || name} — exported from Transition Builder */
+
+${CSS_BASE}${specific ? '\n\n' + specific : ''}`;
+    }
+
+    function indent(str, spaces) {
+        const pad = ' '.repeat(spaces);
+        return str.split('\n').join('\n' + pad);
+    }
+
+    function generateCustomJS(cfg) {
+        const buildCall = (block) => {
+            if (!block) return '() => null';
+            const method = (block.method || 'to').toLowerCase();
+            const fn = ({ from: 'from', to: 'to', fromto: 'fromTo', set: 'set' })[method] || 'to';
+            const props = Object.assign({}, block.props || {});
+            if (fn !== 'set') {
+                if (props.duration === undefined) props.duration = 1;
+                if (props.ease === undefined)     props.ease = 'power3.inOut';
+                if (block.time > 0 && props.delay === undefined) props.delay = block.time;
+            }
+            const propsStr = indent(JSON.stringify(props, null, 2), 4);
+            if (fn === 'fromTo') return `gsap.fromTo(target, {}, ${propsStr})`;
+            return `gsap.${fn}(target, ${propsStr})`;
+        };
+        const enter = cfg.enter || {};
+        const exit  = cfg.exit  || {};
+        const header = [
+            '// Custom — exported from Transition Builder',
+            '// Requires GSAP 3+ loaded as `gsap`.',
+            '//',
+            '// Usage:',
+            "//   const t = new Function('return ' + codeFromDB)();",
+            '//   await t.exit(element);',
+            '//   await t.enter(element);',
+            ''
+        ].join('\n');
+        return header + `({
+  exit(target) {
+    return ${buildCall(exit)};
+  },
+  enter(target) {
+    return ${buildCall(enter)};
+  }
+})`;
+    }
+
+    function generatePresetJS(name, transition, cfg) {
+        const PUBLIC = ['build', 'arrive', 'exit', 'enter'];
+        const methodSources = [];
+        const publicWrappers = [];
+        let usesTintColor = false;
+
+        Object.entries(transition).forEach(([key, value]) => {
+            if (typeof value !== 'function') return;
+            const src = value.toString();
+            if (src.includes('tintColor')) usesTintColor = true;
+
+            if (PUBLIC.includes(key)) {
+                // Rename `build(o, c) {...}` → `_build(o, c) {...}` so the
+                // public wrapper can inject `this.config` as `c`.
+                const renamed = src.replace(/^(\s*)(async\s+)?(\w+)\s*\(/, (m, ws, asyncK) => {
+                    return ws + (asyncK || '') + '_' + key + '(';
+                });
+                methodSources.push('    ' + indent(renamed, 4));
+            } else {
+                // Helpers (_prop, _exitFrom, _clips, …) stay as-is.
+                methodSources.push('    ' + indent(src, 4));
+            }
+        });
+
+        // Public wrappers bind the frozen config + set up overlay state/class
+        publicWrappers.push(`    build(target) {
+      ensureStyles();
+      target.classList.add('pt-overlay');
+      target.setAttribute('data-transition', ${JSON.stringify(name)});
+      return this._build(target, this.config);
+    }`);
+        publicWrappers.push(`    arrive(target) { return this._arrive(target, this.config); }`);
+        publicWrappers.push(`    exit(target)   { return this._exit(target, this.config); }`);
+        publicWrappers.push(`    enter(target)  { return this._enter(target, this.config); }`);
+
+        const header = [
+            `// ${transition.label} — exported from Transition Builder`,
+            '// Requires GSAP 3+ loaded as `gsap`. CSS is auto-injected on first build().',
+            '//',
+            '// Usage:',
+            "//   const t = new Function('return ' + codeFromDB)();",
+            '//   const overlay = document.createElement("div");',
+            '//   document.body.appendChild(overlay);',
+            '//   t.build(overlay);          // tags element as .pt-overlay + injects styles',
+            '//   overlay.classList.add("is-active");',
+            '//   await t.exit(overlay);     // play exit (cover viewport)',
+            '//   t.arrive(overlay);         // snap to the covering state',
+            '//   await t.enter(overlay);    // play enter (uncover)',
+            '//   overlay.classList.remove("is-active");',
+            ''
+        ].join('\n');
+
+        const css = `${CSS_BASE}${CSS_BY_TRANSITION[name] ? '\n\n' + CSS_BY_TRANSITION[name] : ''}`;
+        const cssConst = `  const CSS = ${JSON.stringify(css)};
+  const STYLE_ID = 'pt-exported-${name}';
+  function ensureStyles() {
+    if (document.getElementById(STYLE_ID)) return;
+    const el = document.createElement('style');
+    el.id = STYLE_ID;
+    el.textContent = CSS;
+    document.head.appendChild(el);
+  }`;
+
+        const configLine = '    config: ' + indent(JSON.stringify(cfg, null, 2), 4);
+        const prelude = (usesTintColor ? TINT_COLOR_SRC + '\n\n' : '') + cssConst + '\n\n';
+        const body = [configLine, ...methodSources, ...publicWrappers].join(',\n');
+
+        return header + '(function () {\n' + prelude + '  return {\n' + body + '\n  };\n})()';
+    }
+
+    function generateTransitionJS() {
+        const name = getSelected();
+        const transition = TRANSITIONS[name];
+        if (!transition) return '/* transition not found */';
+        const cfg = getConfig(name);
+        if (name === 'custom') return generateCustomJS(cfg);
+        return generatePresetJS(name, transition, cfg);
+    }
+
     function openExportView(modal) {
         const main = modal.querySelector('.pt-main');
         const existing = main.querySelector('.pt-export-view');
         if (existing) existing.remove();
 
-        const code = generateTransitionConfig();
         const name = getSelected();
         const label = (TRANSITIONS[name] && TRANSITIONS[name].label) || name;
 
@@ -1550,8 +1838,17 @@
         view.className = 'pt-export-view';
         view.innerHTML = `
             <div class="pt-export-head">
-                <h3 class="pt-export-title">Config: ${esc(label)}</h3>
-                <span class="pt-export-sub">Saved under <code>pt:cfg:${esc(name)}:shared | :exit | :enter</code>. Copy and store in your database.</span>
+                <h3 class="pt-export-title">Export: ${esc(label)}</h3>
+                <span class="pt-export-sub">
+                    <span data-export-sub="js">Runnable JS. CSS is auto-injected on <code>build()</code> — drop and run.</span>
+                    <span data-export-sub="json" hidden>JSON config — matches <code>pt:cfg:${esc(name)}:shared | :exit | :enter</code> in localStorage.</span>
+                    <span data-export-sub="css"  hidden>Standalone CSS — paste into your stylesheet if you prefer not to auto-inject.</span>
+                </span>
+            </div>
+            <div class="pt-export-tabs">
+                <button class="pt-export-tab active" type="button" data-export-mode="js">Code (JS)</button>
+                <button class="pt-export-tab"        type="button" data-export-mode="css">CSS</button>
+                <button class="pt-export-tab"        type="button" data-export-mode="json">Config (JSON)</button>
             </div>
             <textarea class="pt-export-code" readonly spellcheck="false"></textarea>
             <div class="pt-export-foot">
@@ -1563,8 +1860,28 @@
                 </button>
             </div>
         `;
-        view.querySelector('.pt-export-code').value = code;
         main.appendChild(view);
+
+        const textarea = view.querySelector('.pt-export-code');
+        const GENERATORS = {
+            js:   generateTransitionJS,
+            css:  generateTransitionCSS,
+            json: generateTransitionConfig
+        };
+        const setMode = (mode) => {
+            const gen = GENERATORS[mode] || GENERATORS.js;
+            textarea.value = gen();
+            view.querySelectorAll('.pt-export-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.exportMode === mode);
+            });
+            view.querySelectorAll('[data-export-sub]').forEach(el => {
+                el.hidden = el.dataset.exportSub !== mode;
+            });
+        };
+        setMode('js');
+        view.querySelectorAll('.pt-export-tab').forEach(t => {
+            t.addEventListener('click', () => setMode(t.dataset.exportMode));
+        });
 
         view.querySelector('[data-export-action="back"]').addEventListener('click', () => view.remove());
 
@@ -1588,7 +1905,7 @@
     function presetSchemaField(key, spec, val) {
         const label = spec.label || key;
         if (spec.type === 'range') {
-            return presetField(label, true, 'number', key, null, val, {
+            return presetField(label, 'number', key, null, val, {
                 min: spec.min, max: spec.max, step: spec.step
             });
         }
@@ -1597,10 +1914,10 @@
                 { value: '', label: 'Select One' },
                 ...spec.options.map(o => ({ value: o, label: o }))
             ];
-            return presetField(label, true, 'select', key, opts, val);
+            return presetField(label, 'select', key, opts, val);
         }
-        if (spec.type === 'color')  return presetField(label, true, 'color',  key, null, val);
-        if (spec.type === 'toggle') return presetField(label, false, 'toggle', key, null, val);
+        if (spec.type === 'color')  return presetField(label, 'color',  key, null, val);
+        if (spec.type === 'toggle') return presetField(label, 'toggle', key, null, val);
         return '';
     }
 
@@ -1637,15 +1954,14 @@
         let html = '';
         html += `<div class="pt-block" data-phase="global">
             <h4 class="pt-block-title">Global</h4>
-            ${presetField('Body Effect', true, 'select', '__bodyEffect', bodyEffectOptions, global.bodyEffect)}
-            ${presetField('Effect Strength', true, 'number', '__bodyStrength', null, global.bodyStrength, { min: 0, max: 1, step: 0.05 })}
-            ${presetField('Hold Duration', true, 'number', '__holdDuration', null, global.holdDuration, { min: 0, max: 3, step: 0.05 })}
-            ${presetField('Overlay Logo', true, 'text', '__overlayLogo', null, global.overlayLogo || '', { placeholder: 'URL, data-URL, or inline <svg>' })}
-            ${presetField('Logo Size', true, 'number', '__overlayLogoSize', null, global.overlayLogoSize || 72, { min: 16, max: 240, step: 2 })}
-            ${presetField('Overlay Label', true, 'text', '__overlayLabel', null, global.overlayLabel || '', { placeholder: 'Brand text' })}
-            ${presetField('Show Spinner', false, 'toggle', '__overlaySpinner', null, !!global.overlaySpinner)}
+            ${presetField('Body Effect', 'select', '__bodyEffect', bodyEffectOptions, global.bodyEffect)}
+            ${presetField('Effect Strength', 'number', '__bodyStrength', null, global.bodyStrength, { min: 0, max: 1, step: 0.05 })}
+            ${presetField('Hold Duration', 'number', '__holdDuration', null, global.holdDuration, { min: 0, max: 3, step: 0.05 })}
+            ${presetField('Overlay Logo', 'text', '__overlayLogo', null, global.overlayLogo || '', { placeholder: 'URL, data-URL, or inline <svg>' })}
+            ${presetField('Logo Size', 'number', '__overlayLogoSize', null, global.overlayLogoSize || 72, { min: 16, max: 240, step: 2 })}
+            ${presetField('Overlay Label', 'text', '__overlayLabel', null, global.overlayLabel || '', { placeholder: 'Brand text' })}
         </div>`;
-        html += presetField('Transition Type', true, 'select', '__type', transitionOptions, name);
+        html += presetField('Transition Type', 'select', '__type', transitionOptions, name);
         html += shared.map(([k, s]) => presetSchemaField(k, s, cfg[k])).join('');
 
         if (exit.length) {
@@ -1679,10 +1995,9 @@
             '__holdDuration':    'holdDuration',
             '__overlayLogo':     'overlayLogo',
             '__overlayLogoSize': 'overlayLogoSize',
-            '__overlayLabel':    'overlayLabel',
-            '__overlaySpinner':  'overlaySpinner'
+            '__overlayLabel':    'overlayLabel'
         };
-        const OVERLAY_DOM_KEYS = new Set(['overlayLogo', 'overlayLogoSize', 'overlayLabel', 'overlaySpinner']);
+        const OVERLAY_DOM_KEYS = new Set(['overlayLogo', 'overlayLogoSize', 'overlayLabel']);
         Object.entries(GLOBAL_KEYS).forEach(([attr, key]) => {
             const el = pane.querySelector(`[data-prop="${attr}"]`);
             if (!el) return;
@@ -1850,17 +2165,16 @@
             overlay.classList.add('is-active');
             try {
                 await Promise.all([
-                    TRANSITIONS[name].exit(overlay, cfg),
+                    playPhase(TRANSITIONS[name], 'exit', overlay, cfg),
                     playBodyOut(global)
                 ]);
                 showOverlayUI();
-                scheduleSpinner();
                 const hold = (global.holdDuration > 0 ? global.holdDuration * 1000 : 200);
                 await new Promise(r => setTimeout(r, hold));
                 TRANSITIONS[name].arrive(overlay, cfg);
                 hideOverlayUI();
                 await Promise.all([
-                    TRANSITIONS[name].enter(overlay, cfg),
+                    playPhase(TRANSITIONS[name], 'enter', overlay, cfg),
                     playBodyIn(global)
                 ]);
             } finally {
@@ -1905,7 +2219,7 @@
                 document.documentElement.classList.remove('pt-arriving');
                 requestAnimationFrame(() => {
                     Promise.all([
-                        TRANSITIONS[enterName].enter(overlay, enterCfg),
+                        playPhase(TRANSITIONS[enterName], 'enter', overlay, enterCfg),
                         playBodyIn(global)
                     ]).then(() => {
                         overlay.classList.remove('is-active');
