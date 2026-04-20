@@ -1203,15 +1203,6 @@ section {
    Page Transition Core
    ============================================================ */
 
-html.pt-arriving body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: #0a0a0a;
-    z-index: 99998;
-    pointer-events: none;
-}
-
 .pt-overlay {
     position: fixed;
     inset: 0;
